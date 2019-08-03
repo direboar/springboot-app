@@ -1,0 +1,128 @@
+//https://qiita.com/opengl-8080/items/6409669dc3f8b8071af4
+buildscript {
+    ext {
+        springBootVersion = '2.1.4.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+//see https://docs.gradle.org/current/userguide/java_testing.html#using_junit5
+//https://discuss.gradle.org/t/cannot-use-plugins-block-inside-subprojects-block/13570/3
+subprojects {
+  apply plugin: 'java'
+  apply plugin: 'checkstyle'
+  apply plugin: 'pmd'
+  apply plugin: 'findbugs'
+  apply plugin: 'jacoco'
+  apply plugin: 'org.springframework.boot'
+  apply plugin: 'io.spring.dependency-management'
+
+  configurations {
+      developmentOnly
+      runtimeClasspath {
+          extendsFrom developmentOnly
+      }
+  }
+  
+  sourceCompatibility = '1.8'
+  targetCompatibility = '1.8'
+  
+  //srcのエンコーディングを指定。
+  //see http://nobeans.hatenablog.com/entry/20091104/1257344503
+  tasks.withType(AbstractCompile)*.options*.encoding = tasks.withType(GroovyCompile)*.groovyOptions*.encoding = 'UTF-8'
+  
+  repositories {
+      mavenCentral()
+      jcenter()
+  }
+  
+  dependencies {
+      //spring boot
+      implementation 'org.springframework.boot:spring-boot-starter'
+      //rest
+      implementation "org.springframework.boot:spring-boot-starter-web"
+  
+      developmentOnly("org.springframework.boot:spring-boot-devtools")
+  
+      //test
+      //https://qiita.com/gumimin/items/f15eaede3e0e5b7a11a5
+      testImplementation ('org.springframework.boot:spring-boot-starter-test'){
+          exclude module: 'junit'
+      }
+      //junit5
+      testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
+      testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.2'
+      
+      //assertJ
+      testImplementation "org.assertj:assertj-core:3.11.1"
+  }
+  
+  //checkstyleの設定。
+  checkstyle {
+      configFile = file("${rootProject.projectDir}/config/checkstyle.xml")
+      toolVersion = '8.10.1'
+      sourceSets = [project.sourceSets.main]
+      ignoreFailures = true
+  }
+  
+  //pmdの設定
+  pmd {
+      toolVersion = '5.8.1'
+      sourceSets = [project.sourceSets.main] 
+      ignoreFailures = true
+      consoleOutput = true
+  }
+  
+  //findbugsの設定
+  findbugs {
+      toolVersion = '3.0.1'
+      sourceSets = [project.sourceSets.main] 
+      ignoreFailures = true
+      effort = "max"
+  }
+  
+  //FindBugsタスクのフォーマットをhtmlに変更している。 DSLのAPI仕様上は、ReadOnlyってなってるが。
+  //https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.FindBugs.html#org.gradle.api.plugins.quality.FindBugs:reports
+  tasks.withType(FindBugs) { //tasks.withType(タスク型）で、タスクコンテナから指定されたタスクを取得する。
+      reports {
+          xml.enabled = false
+          html.enabled = true
+      }
+  }
+  
+  //jacocoの設定
+  jacoco{
+      toolVersion = '0.8.0'
+  }
+  
+  //jacocoのレポート出力設定
+  jacocoTestReport {
+      reports {
+          xml.enabled false
+          csv.enabled false
+          html.destination file("${buildDir}/jacocoHtml")
+      }
+  }
+  
+  test {
+      //junit5.
+      //@see https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/Test.html#useJUnitPlatform--
+      //Specifies that JUnit Platform (a.k.a. JUnit 5) should be used to execute the tests.
+      //junit5に、jupiterを使うのか、Vintageを使うのかを指定する。デフォルトはクラスパスにある方が使用される。
+      
+      useJUnitPlatform()
+  
+      //test実行時のjacoco設定。（jacocoがテスト実行時に生成するダンプ情報の出力先指定。jacocoレポート出力はtestタスクとは別に実行する必要あり。）
+      jacoco {
+          destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+          classDumpDir = file("$buildDir/jacoco/classpathdumps")
+      }
+  }
+  
+}
+
