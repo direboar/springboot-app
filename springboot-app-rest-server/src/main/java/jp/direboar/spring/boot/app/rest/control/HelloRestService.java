@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloRestService {
 
-	@GetMapping("/hello")
-	public String hello() {
-		return "this is rest server!";
-	}
+    @GetMapping("/hello")
+    public String hello() {
+        return "this is rest server!";
+    }
 
 }

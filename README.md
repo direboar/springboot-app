@@ -17,9 +17,18 @@ lombokは適用したい。
 
 #### 静的コード解析
 * chckstyle 8.18(STSに導入したバージョンに合わせた)
-* spotbugs
+* spotbugs 4.0.0-beta3(STSに導入したバージョンに合わせた)
 * pmd 6.17.0(STSに導入したバージョンに合わせた)
 * jacoco 0.8.2  (JDK11に対応するため　https://github.com/vaskoz/core-java9-impatient/issues/11）
+
+参考:静的解析ツール導入の参考。
+https://qiita.com/toastkidjp/items/180e69d49cbdccb7d3fe
+
+##### 採用ルール:
+* checkstyle …googlestyleをベース。ただしindentを4に。 
+https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml
+* formatter …checkstyleに合わせる。
+https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml
 
 #### 単体テスト
 * jUnit5
@@ -50,4 +59,4 @@ https://raw.github.com/satyagraha/gfm_viewer/master/p2-composite/
 
 * chckstyleプラグイン
 * eclipse-pmd プラグイン　https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/
-
+* Spotbugs Eclipse Plugin

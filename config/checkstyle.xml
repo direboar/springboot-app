@@ -3,7 +3,7 @@
     "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
     "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 	
-<!-- Google Java Styleから描きを変更
+<!-- Google Java Styleから下記を変更
     Indentationの各種値を 2 から 4, 4 から 8 に変更
     severityを warning から error に変更
 -->

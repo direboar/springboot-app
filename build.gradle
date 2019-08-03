@@ -1,17 +1,23 @@
 //https://qiita.com/opengl-8080/items/6409669dc3f8b8071af4
 buildscript {
     ext {
+        //囲み文字は、全体的に" で囲ったほうがトラブルになりにくい。 ''で囲った場合に、${変数}が解決されないため。
         springBootVersion = "2.1.6.RELEASE"
     }
     repositories {
-        mavenCentral()
+//        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         //https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/
         //springBootのjar生成や、依存関係の解決をする。 指定したバージョンのBOM(spring-boot-dependencies)で規定したバージョンに、依存JARをそろえる。
-        
-        //囲み文字は、全体的に" で囲ったほうがトラブルになりにくい。 ''で囲った場合に、${変数}が解決されないため。
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        
+        //https://plugins.gradle.org/plugin/com.github.spotbugs
+		classpath("gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:2.0.0")
+
     }
 }
 
@@ -21,7 +27,7 @@ subprojects {
   apply plugin: "java"
   apply plugin: "checkstyle"
   apply plugin: "pmd"
-  apply plugin: "findbugs"
+  apply plugin: "com.github.spotbugs"
   apply plugin: "jacoco"
   apply plugin: "org.springframework.boot"
   apply plugin: "io.spring.dependency-management"
@@ -29,7 +35,7 @@ subprojects {
   ext {
     checkstyleVersion = "8.18"
     pmdVersion = "6.17.0"
-    findbugsVersion = "3.0.1"
+    spotbugsVersion = "4.0.0-beta1"
     jacocoVersion = "0.8.2"
   }
 
@@ -67,6 +73,11 @@ subprojects {
       //junit5
       testImplementation "org.junit.jupiter:junit-jupiter-api"
       testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+      
+      //slf4j spotBugsが「SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".」というエラーを出すことに対する暫定対処。
+      //https://qiita.com/m4kvn/items/3b68e6879672a4202e3d
+      //issue : https://github.com/spotbugs/spotbugs-gradle-plugin/issues/133
+      compileOnly 'org.slf4j:slf4j-log4j12:1.7.21'
   }
   
   //checkstyleの設定。
@@ -79,27 +90,33 @@ subprojects {
   
   //pmdの設定
   pmd {
+      //FIXME ルールファイルを作成する。
+      
       toolVersion = "${pmdVersion}"
+      //暫定で組み込みのルールを設定。
+      //https://pmd.github.io/pmd/pmd_rules_java.html
+      //prefix「java」が必要
+      //https://qiita.com/toastkidjp/items/180e69d49cbdccb7d3fe
+      ruleSets = ["java-quickstart"]
       sourceSets = [project.sourceSets.main] 
       ignoreFailures = true
       consoleOutput = true
   }
   
-  //findbugsの設定
-  findbugs {
-      toolVersion = "${findbugsVersion}"
-      sourceSets = [project.sourceSets.main] 
-      ignoreFailures = true
-      effort = "max"
+  //spotbugsの設定
+  //「現バージョンの SpotBugs Gradle プラグインは FindBugs Gradle プラグインと同じ方法で設定します。」とのこと。
+  //https://spotbugs.readthedocs.io/ja/latest/gradle.html  
+  //https://spotbugs.readthedocs.io/ja/latest/migration.html
+  spotbugs {
+    toolVersion = "${spotbugsVersion}"
+    sourceSets = [project.sourceSets.main] 
+    ignoreFailures = true
+    effort = "max"
   }
-  
-  //FindBugsタスクのフォーマットをhtmlに変更している。 DSLのAPI仕様上は、ReadOnlyってなってるが。
-  //https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.FindBugs.html#org.gradle.api.plugins.quality.FindBugs:reports
-  tasks.withType(FindBugs) { //tasks.withType(タスク型）で、タスクコンテナから指定されたタスクを取得する。
-      reports {
-          xml.enabled = false
-          html.enabled = true
-      }
+  // To generate an HTML report instead of XML
+  tasks.withType(com.github.spotbugs.SpotBugsTask) { //tasks.withType(タスク型）で、タスクコンテナから指定されたタスクを取得する。
+    reports.xml.enabled = false
+    reports.html.enabled = true
   }
   
   //jacocoの設定
@@ -130,6 +147,5 @@ subprojects {
           classDumpDir = file("$buildDir/jacoco/classpathdumps")
       }
   }
-  
 }
 
