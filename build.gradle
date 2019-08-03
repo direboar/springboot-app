@@ -1,12 +1,16 @@
 //https://qiita.com/opengl-8080/items/6409669dc3f8b8071af4
 buildscript {
     ext {
-        springBootVersion = '2.1.4.RELEASE'
+        springBootVersion = "2.1.6.RELEASE"
     }
     repositories {
         mavenCentral()
     }
     dependencies {
+        //https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/
+        //springBootのjar生成や、依存関係の解決をする。 指定したバージョンのBOM(spring-boot-dependencies)で規定したバージョンに、依存JARをそろえる。
+        
+        //囲み文字は、全体的に" で囲ったほうがトラブルになりにくい。 ''で囲った場合に、${変数}が解決されないため。
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
@@ -14,13 +18,20 @@ buildscript {
 //see https://docs.gradle.org/current/userguide/java_testing.html#using_junit5
 //https://discuss.gradle.org/t/cannot-use-plugins-block-inside-subprojects-block/13570/3
 subprojects {
-  apply plugin: 'java'
-  apply plugin: 'checkstyle'
-  apply plugin: 'pmd'
-  apply plugin: 'findbugs'
-  apply plugin: 'jacoco'
-  apply plugin: 'org.springframework.boot'
-  apply plugin: 'io.spring.dependency-management'
+  apply plugin: "java"
+  apply plugin: "checkstyle"
+  apply plugin: "pmd"
+  apply plugin: "findbugs"
+  apply plugin: "jacoco"
+  apply plugin: "org.springframework.boot"
+  apply plugin: "io.spring.dependency-management"
+  
+  ext {
+    checkstyleVersion = "8.18"
+    pmdVersion = "6.17.0"
+    findbugsVersion = "3.0.1"
+    jacocoVersion = "0.8.2"
+  }
 
   configurations {
       developmentOnly
@@ -29,12 +40,12 @@ subprojects {
       }
   }
   
-  sourceCompatibility = '1.8'
-  targetCompatibility = '1.8'
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
   
   //srcのエンコーディングを指定。
   //see http://nobeans.hatenablog.com/entry/20091104/1257344503
-  tasks.withType(AbstractCompile)*.options*.encoding = tasks.withType(GroovyCompile)*.groovyOptions*.encoding = 'UTF-8'
+  tasks.withType(AbstractCompile)*.options*.encoding = tasks.withType(GroovyCompile)*.groovyOptions*.encoding = "UTF-8"
   
   repositories {
       mavenCentral()
@@ -42,37 +53,33 @@ subprojects {
   }
   
   dependencies {
-      //spring boot
-      implementation 'org.springframework.boot:spring-boot-starter'
-      //rest
+      //spring-boot-gradle-pluginがバージョンを解決するものは、そのバージョンを使用する。（個別に設定しても、強制的に上書きされる）
+      //Spring MVC
       implementation "org.springframework.boot:spring-boot-starter-web"
-  
+      //Devtools
       developmentOnly("org.springframework.boot:spring-boot-devtools")
   
       //test
       //https://qiita.com/gumimin/items/f15eaede3e0e5b7a11a5
-      testImplementation ('org.springframework.boot:spring-boot-starter-test'){
-          exclude module: 'junit'
+      testImplementation ("org.springframework.boot:spring-boot-starter-test"){
+          exclude module: "junit"
       }
       //junit5
-      testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
-      testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.2'
-      
-      //assertJ
-      testImplementation "org.assertj:assertj-core:3.11.1"
+      testImplementation "org.junit.jupiter:junit-jupiter-api"
+      testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
   }
   
   //checkstyleの設定。
   checkstyle {
       configFile = file("${rootProject.projectDir}/config/checkstyle.xml")
-      toolVersion = '8.10.1'
+      toolVersion = "${checkstyleVersion}"
       sourceSets = [project.sourceSets.main]
       ignoreFailures = true
   }
   
   //pmdの設定
   pmd {
-      toolVersion = '5.8.1'
+      toolVersion = "${pmdVersion}"
       sourceSets = [project.sourceSets.main] 
       ignoreFailures = true
       consoleOutput = true
@@ -80,7 +87,7 @@ subprojects {
   
   //findbugsの設定
   findbugs {
-      toolVersion = '3.0.1'
+      toolVersion = "${findbugsVersion}"
       sourceSets = [project.sourceSets.main] 
       ignoreFailures = true
       effort = "max"
@@ -97,7 +104,7 @@ subprojects {
   
   //jacocoの設定
   jacoco{
-      toolVersion = '0.8.0'
+      toolVersion = "${jacocoVersion}"
   }
   
   //jacocoのレポート出力設定
