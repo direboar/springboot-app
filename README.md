@@ -60,3 +60,4 @@ https://raw.github.com/satyagraha/gfm_viewer/master/p2-composite/
 * chckstyleプラグイン
 * eclipse-pmd プラグイン　https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/
 * Spotbugs Eclipse Plugin
+* Gradle IDE Pack (EGradle Editor)

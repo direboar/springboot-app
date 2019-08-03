@@ -5,7 +5,6 @@ buildscript {
         springBootVersion = "2.1.6.RELEASE"
     }
     repositories {
-//        mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -16,7 +15,7 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         
         //https://plugins.gradle.org/plugin/com.github.spotbugs
-		classpath("gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:2.0.0")
+        classpath("gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:2.0.0")
 
     }
 }
