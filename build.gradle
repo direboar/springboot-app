@@ -3,6 +3,8 @@ buildscript {
     ext {
         //囲み文字は、全体的に" で囲ったほうがトラブルになりにくい。 ''で囲った場合に、${変数}が解決されないため。
         springBootVersion = "2.1.6.RELEASE"
+        spotbugsGradlePluginVersion = "2.0.0"
+        lombokVersion = "3.8.2"
     }
     repositories {
         maven {
@@ -15,7 +17,12 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         
         //https://plugins.gradle.org/plugin/com.github.spotbugs
-        classpath("gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:2.0.0")
+        classpath("gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:${spotbugsGradlePluginVersion}")
+
+        //lombokでは、公式でgradle pluginの採用を進めている。pluginを使うと、lombokをdependeniesに追加不要。
+        //eclipse上での認識も、プラグインがないとうまく動かない。
+        //https://projectlombok.org/setup/gradle
+        classpath "io.freefair.gradle:lombok-plugin:${lombokVersion}"
 
     }
 }
@@ -31,11 +38,14 @@ subprojects {
   apply plugin: "org.springframework.boot"
   apply plugin: "io.spring.dependency-management"
   
+  apply plugin: "io.freefair.lombok"
+  
   ext {
     checkstyleVersion = "8.18"
     pmdVersion = "6.17.0"
     spotbugsVersion = "4.0.0-beta1"
     jacocoVersion = "0.8.2"
+    slf4jVersion="1.7.21"
   }
 
   configurations {
@@ -45,8 +55,8 @@ subprojects {
       }
   }
   
-  sourceCompatibility = "1.8"
-  targetCompatibility = "1.8"
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
   
   //srcのエンコーディングを指定。
   //see http://nobeans.hatenablog.com/entry/20091104/1257344503
@@ -72,11 +82,13 @@ subprojects {
       //junit5
       testImplementation "org.junit.jupiter:junit-jupiter-api"
       testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-      
+   	  
       //slf4j spotBugsが「SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".」というエラーを出すことに対する暫定対処。
       //https://qiita.com/m4kvn/items/3b68e6879672a4202e3d
       //issue : https://github.com/spotbugs/spotbugs-gradle-plugin/issues/133
-      compileOnly 'org.slf4j:slf4j-log4j12:1.7.21'
+      //versionはBOMで解決済み
+      compileOnly "org.slf4j:slf4j-log4j12"
+      
   }
   
   //checkstyleの設定。

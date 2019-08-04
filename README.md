@@ -3,11 +3,12 @@
 | 技術要素 | 採用技術 |
 |:---|:---|
 |Java    |Java11(Adapt Open JDK)    |
- | ビルドツール |Gradle5.5.1   |
+| ビルドツール |Gradle5.5.1   |
 |DB    |インメモリDB(先々はDocker+Postgres)   |
- |動作環境    |ローカル（先々はHeroku等）   |
+|動作環境    |ローカル（先々はHeroku等）   |
 
-lombokは適用したい。
+lombokは適用したい
+＝＞https://projectlombok.org/
 
 #### プロジェクト構成
 * マルチプロジェクト
