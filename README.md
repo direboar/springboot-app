@@ -7,8 +7,9 @@
 |DB    |インメモリDB(先々はDocker+Postgres)   |
 |動作環境    |ローカル（先々はHeroku等）   |
 
-lombokは適用したい
-＝＞https://projectlombok.org/
+lombokは適用したい　＝＞https://projectlombok.org/
+参考：lombok採用時は、Issueをよく確認したほうが良い。
+　　　Java9以降のサポートはよく確認。https://github.com/rzwitserloot/lombok/issues
 
 #### プロジェクト構成
 * マルチプロジェクト
