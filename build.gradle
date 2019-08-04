@@ -58,10 +58,6 @@ subprojects {
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
   
-  //srcのエンコーディングを指定。
-  //see http://nobeans.hatenablog.com/entry/20091104/1257344503
-  tasks.withType(AbstractCompile)*.options*.encoding = tasks.withType(GroovyCompile)*.groovyOptions*.encoding = "UTF-8"
-  
   repositories {
       mavenCentral()
       jcenter()
@@ -89,6 +85,19 @@ subprojects {
       //versionはBOMで解決済み
       compileOnly "org.slf4j:slf4j-log4j12"
       
+  }
+  
+  //https://docs.gradle.org/5.3/userguide/building_java_projects.html
+  //https://m213f.hateblo.jp/entry/2018/10/26/210803
+  //Javacへの指定
+  tasks.withType(JavaCompile) {
+    //エンコーディングを指定。
+    options.encoding = "UTF-8"
+  }
+  //JavaDocへの指定
+  tasks.withType(Javadoc) {
+     //エンコーディングを指定。
+    options.encoding = "UTF-8"
   }
   
   //checkstyleの設定。
