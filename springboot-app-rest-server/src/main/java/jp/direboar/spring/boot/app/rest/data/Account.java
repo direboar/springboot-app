@@ -1,12 +1,14 @@
 package jp.direboar.spring.boot.app.rest.data;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
+import org.hibernate.validator.constraints.Length;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 /**
  * アカウント情報.
@@ -16,8 +18,8 @@ import lombok.RequiredArgsConstructor;
 // lombok
 // getter/setter/equals/toString/hashCodeの自動生成。
 @Data
-// NonNull項目を取るコンストラクタを生成する。
-@RequiredArgsConstructor
+// 全項目を取るコンストラクタを生成する。
+@AllArgsConstructor
 // デフォルトコンストラクタを生成する。
 @NoArgsConstructor
 public class Account {
@@ -26,40 +28,52 @@ public class Account {
     /**
      * ID.
      */
-    // lombok 非Null項目を宣言する。Nullチェックが自動的に実装される。
-    @NonNull
+    // lombokの@NonNullを指定すると、MockMVCのテストで対象の項目にNullをセットする振る舞いで想定外にエラーとなるため適用しない。
+    // @NonNull
+    // BeanValidation
+    @NotNull
+    @Length(max = 7)
+    @Pattern(regexp = "[a-zA-Z0-9]*")
     private String id;
 
-    // 必須、２０桁、全角
+    // 必須、２０桁
+    // TODO 全角チェック
     /**
      * 名前.
      */
-    @NonNull
+    // @NonNull
+    @NotNull
+    @Length(max = 20)
     private String name;
 
     // 任意、１４０文字、全角
     /**
      * プロフィール.
      */
+    @Length(max = 140)
     private String profile;
 
     // 必須、日付
     /**
      * 誕生日.
      */
-    @NonNull
-    private LocalDate birthday;
+    // @NonNull
+    @NotNull
+    @Pattern(regexp = "[0-9]{4}-[0-9]{2}-[0-9]{2}")
+    private String birthday;
 
     // 必須、メールアドレス
     /**
      * メールアドレス.
      */
-    @NonNull
+    // @NonNull
+    @NotNull
+    @Email
     private String mailAddress;
 
     /**
      * 登録日.
      */
-    private LocalDateTime createdBy;
+    private String createdBy;
 
 }
