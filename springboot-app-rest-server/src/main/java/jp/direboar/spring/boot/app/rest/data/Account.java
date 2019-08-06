@@ -62,12 +62,13 @@ public class Account {
     @Pattern(regexp = "[0-9]{4}-[0-9]{2}-[0-9]{2}")
     private String birthday;
 
-    // 必須、メールアドレス
+    // 必須、メールアドレス ２５６文字
     /**
      * メールアドレス.
      */
     // @NonNull
     @NotNull
+    @Length(max = 256)
     @Email
     private String mailAddress;
 

@@ -28,7 +28,7 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(code = HttpStatus.CREATED)
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public Account putAccount(@PathVariable("id") String id,
                     @Validated @NotNull @RequestBody Account account) {
         return account;

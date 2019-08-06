@@ -63,3 +63,10 @@ https://raw.github.com/satyagraha/gfm_viewer/master/p2-composite/
 * eclipse-pmd プラグイン　https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/
 * Spotbugs Eclipse Plugin
 * Gradle IDE Pack (EGradle Editor)
+
+#### memo
+HSQLDBの内容確認
+
+http://localhost:8080/h2-console
+
+

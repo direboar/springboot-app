@@ -41,6 +41,7 @@ subprojects {
   apply plugin: "io.freefair.lombok"
   
   ext {
+    springBootMybatisVersion = "2.1.0"
     checkstyleVersion = "8.18"
     pmdVersion = "6.17.0"
     spotbugsVersion = "4.0.0-beta1"
@@ -67,6 +68,8 @@ subprojects {
       //spring-boot-gradle-pluginがバージョンを解決するものは、そのバージョンを使用する。（個別に設定しても、強制的に上書きされる）
       //Spring MVC
       implementation "org.springframework.boot:spring-boot-starter-web"
+      //Spring Mybatis
+      implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${springBootMybatisVersion}"
       //Devtools
       developmentOnly("org.springframework.boot:spring-boot-devtools")
   
@@ -78,6 +81,10 @@ subprojects {
       //junit5
       testImplementation "org.junit.jupiter:junit-jupiter-api"
       testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+      //h2（インメモリDBを利用）
+      //https://docs.spring.io/spring-boot/docs/2.1.7.RELEASE/reference/html/boot-features-sql.html#boot-features-embedded-database-support
+      runtimeOnly "com.h2database:h2"
    	  
       //slf4j spotBugsが「SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".」というエラーを出すことに対する暫定対処。
       //https://qiita.com/m4kvn/items/3b68e6879672a4202e3d

@@ -42,7 +42,7 @@ class AccountControllerTest {
 
         this.mvc.perform(put("/account/v1/{id}", account.getId()).content(json)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isCreated())
+                        .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNoContent())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
