@@ -22,7 +22,7 @@ public class AccountEntity {
      * ID.
      */
     @NonNull
-    private String id;
+    private String accountId;
 
     /**
      * 名前.

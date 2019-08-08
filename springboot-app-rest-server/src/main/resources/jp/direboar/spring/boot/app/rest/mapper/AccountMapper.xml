@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.direboar.spring.boot.app.rest.mapper.AccountMapper">
+  <select id="findById" resultType="AccountEntity">
+    select 
+      ACCOUNT_ID,
+      NAME,
+      PROFILE,
+      BIRTHDAY,
+      MAILADDRESS,
+      CREATEDBY,
+      UPDATEDBY 
+     from
+      ACCOUNT
+     where 
+      ACCOUNT_ID= #{id}
+  </select>
+
+  <insert id="insert" parameterType="AccountEntity">
+	insert into 
+	  ACCOUNT    
+    (ACCOUNT_ID,
+     NAME,
+     PROFILE,
+     BIRTHDAY,
+     MAILADDRESS
+    )VALUES(
+     #{accountId}, 
+     #{name}, 
+     #{profile}, 
+     #{birthday}, 
+     #{mailAddress} 
+    )
+  </insert>
+
+</mapper>

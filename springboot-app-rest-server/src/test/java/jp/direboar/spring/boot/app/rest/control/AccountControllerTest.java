@@ -26,6 +26,10 @@ import jp.direboar.spring.boot.app.rest.data.Account;
 @AutoConfigureMockMvc
 class AccountControllerTest {
 
+    // FIXME このクラスはコントローラのテストなので、サービスはモックにする。
+    // FIXME MyBATISのテストはサービスを単体テストする。
+    // FIXME 全体の結合はRestTestTemplateで実装する。
+
     @Autowired
     private MockMvc mvc;
 
@@ -40,10 +44,11 @@ class AccountControllerTest {
 
         String json = new ObjectMapper().writeValueAsString(account);
 
-        this.mvc.perform(put("/account/v1/{id}", account.getId()).content(json)
+        this.mvc.perform(put("/api/v1/account/{id}", account.getId()).content(json)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNoContent())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+
     }
 
     @Test
@@ -51,7 +56,7 @@ class AccountControllerTest {
         Account account = new Account();
         String json = new ObjectMapper().writeValueAsString(account);
 
-        this.mvc.perform(put("/account/v1/{id}", 1).content(json)
+        this.mvc.perform(put("/api/v1/account/{id}", 1).content(json)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isBadRequest())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
