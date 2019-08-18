@@ -9,43 +9,57 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jp.direboar.spring.boot.app.rest.data.Account;
-import jp.direboar.spring.boot.app.testutil.DbUnitConfiguration;
+import jp.direboar.spring.boot.app.rest.service.AccountService;
 
 // see https://www.mkyong.com/spring-boot/spring-rest-validation-example/
 
+/**
+ * コントローラの単体テスト。 <br/>
+ * BeanValidationの挙動をテストするため、MockMVCを適用する。
+ * <p/>
+ * RestTestTemplateで行うように倒してもよいと思う）
+ */
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
-@Import(DbUnitConfiguration.class)
 @AutoConfigureMockMvc
 class AccountControllerTest {
-
-    // FIXME このクラスはコントローラのテストなので、サービスはモックにする。
-    // FIXME MyBATISのテストはサービスを単体テストする。
-    // FIXME 全体の結合はRestTestTemplateで実装する。
 
     @Autowired
     private MockMvc mvc;
 
+    // mockitoでモック化するSpring Componentを宣言。
+    @MockBean
+    private AccountService accountService;
+
+    // MockBeanをインジェクションするインスタンスを宣言。
+    @InjectMocks
+    private AccountController testee;
+
     @Test
     void testPutAccountOK() throws Exception {
 
-
+        // 期待値を生成。
         Account account = new Account();
         account.setId("1234");
         account.setName("みのくば");
         account.setProfile("みのくばのプロファイル");
         account.setBirthday("2010-10-10");
         account.setMailAddress("minokuba@dummy.co.jp");
+
+        // AccountServiceをモック化。
+        Mockito.when(this.accountService.searchAccount("1234")).thenReturn(account);
 
         String json = new ObjectMapper().writeValueAsString(account);
 
@@ -56,11 +70,15 @@ class AccountControllerTest {
             .andExpect(status().isNoContent())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
 
+        // AccountServiceが１回呼び出されていることをアサーション
+        Mockito.verify(this.accountService, Mockito.times(1)).searchAccount("1234");
+
     }
 
     @Test
     void testPutAccountError() throws Exception {
         Account account = new Account();
+
         String json = new ObjectMapper().writeValueAsString(account);
 
 
@@ -77,6 +95,9 @@ class AccountControllerTest {
             .andExpect(jsonPath("$.messages", hasItem("name:must not be null")))
             .andExpect(jsonPath("$.messages", hasItem("id:must not be null")))
             .andExpect(jsonPath("$.messages", hasItem("mailAddress:must not be null")));
+
+        // AccountServiceが呼び出されていないことをアサーション
+        Mockito.verify(this.accountService, Mockito.never()).searchAccount("1");
 
     }
 
