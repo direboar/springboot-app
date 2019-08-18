@@ -42,10 +42,13 @@ subprojects {
   
   ext {
     springBootMybatisVersion = "2.1.0"
+    dbUnitVersion = "2.6.0"
+    
     checkstyleVersion = "8.18"
     pmdVersion = "6.17.0"
     spotbugsVersion = "4.0.0-beta1"
     jacocoVersion = "0.8.2"
+    
     slf4jVersion="1.7.21"
   }
 
@@ -81,6 +84,9 @@ subprojects {
       //junit5
       testImplementation "org.junit.jupiter:junit-jupiter-api"
       testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+      //dbUnit
+      testImplementation "org.dbunit:dbunit:${dbUnitVersion}"
 
       //h2（インメモリDBを利用）
       //https://docs.spring.io/spring-boot/docs/2.1.7.RELEASE/reference/html/boot-features-sql.html#boot-features-embedded-database-support
